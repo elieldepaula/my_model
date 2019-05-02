@@ -349,7 +349,7 @@ class MY_Model extends CI_Model {
         // Ignore any soft-deleted rows
         if ($this->soft_deletes && $this->temp_with_deleted !== TRUE)
         {
-            $this->dbr->where($this->soft_delete_key, FALSE);
+            $this->dbr->where($this->table_name.'.'.$this->soft_delete_key, FALSE);
         }
 
         $this->trigger('before_find');
@@ -440,6 +440,21 @@ class MY_Model extends CI_Model {
         $this->temp_return_type = $this->return_type;
 
         return $rows;
+    }
+
+    //--------------------------------------------------------------------
+
+    public function insert_update($data)
+    {
+        
+        if (isset($data[$this->primary_key])) {
+            $id = $data[$this->primary_key];
+            unset($data[$this->primary_key]);
+            return $this->update($id, $data);
+        } else {
+            return $this->insert($data);
+        }
+
     }
 
     //--------------------------------------------------------------------
